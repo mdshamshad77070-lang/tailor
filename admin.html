@@ -411,43 +411,42 @@
                         <button type="submit" class="btn-primary" style="margin-top: 1rem; width: 200px; padding: 0.8rem; background: var(--secondary); color: white; border: none; border-radius: 8px; cursor: pointer;">Post Work</button>
                     </form>
                 </div>
-
                 <div class="portfolio-grid" id="portfolio-list">
                     <!-- Portfolio items injected here -->
                 </div>
+            </div>
 
-                <!-- Profile View -->
-                <div id="profile-view" class="section-view">
-                    <div class="profile-container">
-                        <h3>Update Your Professional Profile</h3>
-                        <p style="color: var(--text-dim); margin-bottom: 1.5rem;">These details will be shown on the Home tab for customers.</p>
-                        
-                        <form id="profile-form">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
-                                <div class="form-group">
-                                    <label>Tailor Name</label>
-                                    <input type="text" id="prof-name" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. Master Shamshad" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Years of Experience</label>
-                                    <input type="text" id="prof-exp" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. 15 Years" required>
-                                </div>
+            <!-- Profile View -->
+            <div id="profile-view" class="section-view">
+                <div class="profile-container">
+                    <h3>Update Your Professional Profile</h3>
+                    <p style="color: var(--text-dim); margin-bottom: 1.5rem;">These details will be shown on the Home tab for customers.</p>
+                    
+                    <form id="profile-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
+                            <div class="form-group">
+                                <label>Tailor Name</label>
+                                <input type="text" id="prof-name" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. Master Shamshad" required>
                             </div>
-                            <div class="form-group" style="margin-bottom: 1rem;">
-                                <label>Profile Image URL</label>
-                                <input type="url" id="prof-image" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="https://..." required>
+                            <div class="form-group">
+                                <label>Years of Experience</label>
+                                <input type="text" id="prof-exp" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. 15 Years" required>
                             </div>
-                            <div class="form-group" style="margin-bottom: 1rem;">
-                                <label>Specialty</label>
-                                <input type="text" id="prof-specialty" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. Wedding Suits & Traditional Wear" required>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 1.5rem;">
-                                <label>About Me / Bio</label>
-                                <textarea id="prof-bio" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" rows="4" placeholder="Tell customers about your skills..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn-primary" style="padding: 1rem 2rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Save Profile Details</button>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label>Profile Image URL</label>
+                            <input type="url" id="prof-image" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="https://..." required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label>Specialty</label>
+                            <input type="text" id="prof-specialty" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. Wedding Suits & Traditional Wear" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label>About Me / Bio</label>
+                            <textarea id="prof-bio" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" rows="4" placeholder="Tell customers about your skills..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="padding: 1rem 2rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Save Profile Details</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -643,6 +642,7 @@
                         <div class="action-btns">
                             ${order.status === 'Pending' ? `<button class="btn-action btn-accept" onclick="updateStatus('${id}', 'Accepted')">Accept</button>` : ''}
                             ${order.status === 'Accepted' ? `<button class="btn-action btn-complete" onclick="updateStatus('${id}', 'Completed')">Complete</button>` : ''}
+                            ${order.status !== 'Completed' && order.status !== 'Cancelled' ? `<button class="btn-action" style="background:#ff7675; color:white;" onclick="updateStatus('${id}', 'Cancelled')">Cancel</button>` : ''}
                         </div>
                     </td>
                 `;

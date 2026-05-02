@@ -290,6 +290,7 @@
         .status-pending { background: #f1c40f; color: #000; }
         .status-accepted { background: #3498db; color: #fff; }
         .status-completed { background: #2ecc71; color: #fff; }
+        .status-cancelled { background: #e74c3c; color: #fff; }
 
         /* Portfolio Section */
         .section-title {
@@ -833,6 +834,7 @@
                 }
 
                 myOrders.forEach(order => {
+                    const id = Object.keys(data).find(key => data[key] === order);
                     const date = order.timestamp ? new Date(order.timestamp).toLocaleDateString() : 'N/A';
                     userOrdersList.innerHTML += `
                         <div class="order-card">
@@ -841,12 +843,27 @@
                                 <p>Placed on: ${date}</p>
                                 <p>Delivery: ${order.deliveryDate}</p>
                             </div>
-                            <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
+                            <div style="text-align: right;">
+                                <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
+                                ${order.status !== 'Completed' && order.status !== 'Cancelled' ? 
+                                    `<button onclick="cancelUserOrder('${id}')" style="display:block; margin-top:10px; color:#e74c3c; background:none; border:none; cursor:pointer; font-size:0.75rem; text-decoration:underline;">Cancel Order</button>` 
+                                    : ''}
+                            </div>
                         </div>
                     `;
                 });
             });
         }
+
+        // Cancel User Order
+        window.cancelUserOrder = async (orderId) => {
+            if (confirm("Are you sure you want to cancel this order?")) {
+                try {
+                    await set(ref(db, `orders/${orderId}/status`), 'Cancelled');
+                    alert("Order cancelled successfully.");
+                } catch (e) { alert(e.message); }
+            }
+        };
 
         let isLogin = true;
         let currentUser = null;
