@@ -515,9 +515,9 @@
         <div class="logo">Darzi</div>
         <nav class="nav-links">
             <a href="#" class="nav-link active" onclick="navigate('home')">Home</a>
-            <a href="#portfolio-section" class="nav-link">Our Work</a>
-            <a href="#order-section" class="nav-link nav-protected" onclick="navigate('book')">Book Now</a>
-            <a href="#history-section" class="nav-link nav-protected" id="nav-track" onclick="navigate('track')">Track Order</a>
+            <a href="#" class="nav-link" id="nav-work" onclick="navigate('work')">Our Work</a>
+            <a href="#" class="nav-link nav-protected" id="nav-book" onclick="navigate('book')">Book Now</a>
+            <a href="#" class="nav-link nav-protected" id="nav-track" onclick="navigate('track')">Track Order</a>
         </nav>
         <div class="user-menu">
             <span id="display-name" style="font-size: 0.8rem; color: var(--primary);"></span>
@@ -527,15 +527,15 @@
 
     <!-- Mobile Bottom Navigation -->
     <nav class="bottom-nav">
-        <div class="bottom-nav-item active" onclick="navigate('home')">
+        <div class="bottom-nav-item active" id="mobile-nav-home" onclick="navigate('home')">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span>Home</span>
         </div>
-        <div class="bottom-nav-item" onclick="document.getElementById('portfolio-section').scrollIntoView()">
+        <div class="bottom-nav-item" id="mobile-nav-work" onclick="navigate('work')">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-            <span>Our Work</span>
+            <span>Work</span>
         </div>
-        <div class="bottom-nav-item nav-protected" onclick="navigate('book')">
+        <div class="bottom-nav-item nav-protected" id="mobile-nav-book" onclick="navigate('book')">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
             <span>Book</span>
         </div>
@@ -551,8 +551,11 @@
             <p>Premium bespoke tailoring for the modern gentleman. Experience the luxury of a perfect fit.</p>
             <a href="#order-section" class="btn-nav-primary" onclick="navigate('book')">Book an Appointment</a>
         </div>
+    </div>
 
-        <section id="portfolio-section">
+    <!-- Portfolio View -->
+    <div id="portfolio-view" class="view-section">
+        <section id="portfolio-section" style="padding-top: 2rem;">
             <h2 class="section-title">Our Masterpieces</h2>
             <div class="portfolio-grid" id="portfolio-display">
                 <div style="text-align:center; color: var(--text-dim); grid-column: 1/-1;">Loading designs...</div>
@@ -669,6 +672,7 @@
         const orderSection = document.getElementById('order-section');
         const historySection = document.getElementById('history-section');
         const homeView = document.getElementById('home-view');
+        const portfolioView = document.getElementById('portfolio-view');
         const userOrdersList = document.getElementById('user-orders-list');
         const portfolioDisplay = document.getElementById('portfolio-display');
         const authTitle = document.getElementById('auth-title');
@@ -685,24 +689,27 @@
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.querySelectorAll('.bottom-nav-item').forEach(l => l.classList.remove('active'));
             
+            window.scrollTo(0,0);
+
             if (target === 'home') {
                 homeView.classList.add('active');
                 document.querySelector('a[onclick="navigate(\'home\')"]').classList.add('active');
-                document.querySelector('.bottom-nav-item[onclick="navigate(\'home\')"]').classList.add('active');
-                window.scrollTo(0,0);
+                document.getElementById('mobile-nav-home').classList.add('active');
+            } else if (target === 'work') {
+                portfolioView.classList.add('active');
+                document.getElementById('nav-work').classList.add('active');
+                document.getElementById('mobile-nav-work').classList.add('active');
             } else if (target === 'book') {
                 if (!currentUser) return alert("Please login first to book an appointment.");
                 orderSection.classList.add('active');
-                document.querySelector('a[onclick="navigate(\'book\')"]').classList.add('active');
-                document.querySelector('.bottom-nav-item[onclick="navigate(\'book\')"]').classList.add('active');
-                window.scrollTo(0,0);
+                document.getElementById('nav-book').classList.add('active');
+                document.getElementById('mobile-nav-book').classList.add('active');
             } else if (target === 'track') {
                 if (!currentUser) return alert("Please login first to track your orders.");
                 historySection.classList.add('active');
-                document.querySelector('#nav-track').classList.add('active');
-                document.querySelector('#mobile-nav-track').classList.add('active');
+                document.getElementById('nav-track').classList.add('active');
+                document.getElementById('mobile-nav-track').classList.add('active');
                 loadUserOrders();
-                window.scrollTo(0,0);
             }
         };
 
