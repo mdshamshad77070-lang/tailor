@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darzi Admin | Management Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #c5a059;
+            --primary-dark: #a88948;
+            --secondary: #1a1a2e; /* Keeping Navy as secondary for text/accents */
+            --accent: #c5a059;
+            --bg: #fdfcfb;
+            --dark-bg: #1a1a2e;
+            --card-bg: #ffffff;
+            --text: #1a1a2e;
+            --text-dim: #64748b;
+            --glass-border: rgba(197, 160, 89, 0.2);
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #3498db;
+            --font-main: 'Inter', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            color: var(--text);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .admin-nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-dim);
+            transition: 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-tab.active-tab {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .section-view {
+            display: none;
+        }
+
+        .section-view.active {
+            display: block !important;
+        }
+
+        /* Portfolio Form */
+        .portfolio-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .portfolio-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .portfolio-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .portfolio-card-body {
+            padding: 1rem;
+        }
+
+        .portfolio-card-body h4 { margin-bottom: 0.5rem; }
+        .portfolio-card-body p { font-size: 0.85rem; color: var(--text-dim); }
+
+        .btn-logout {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-logout:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Auth Section */
+        #admin-auth {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        #admin-auth h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+        }
+
+        /* Dashboard Section */
+        #admin-dashboard {
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .stat-card h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        /* Orders List */
+        .orders-container {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-accepted { background: #dbeafe; color: #1e40af; }
+        .badge-completed { background: #d1fae5; color: #065f46; }
+
+        .details-cell {
+            max-width: 250px;
+            font-size: 0.9rem;
+        }
+
+        .details-cell strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--secondary);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-accept { background: var(--info); color: white; }
+        .btn-complete { background: var(--success); color: white; }
+        .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .active { display: block !important; }
+
+        @media (max-width: 768px) {
+            main { padding: 1rem; }
+            .stat-card { padding: 1rem; }
+            td, th { padding: 0.75rem; font-size: 0.8rem; }
+            .details-cell { max-width: 150px; }
+        }
+
+        .empty-state {
+            padding: 4rem;
+            text-align: center;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Darzi Admin</div>
+        <div class="admin-nav">
+            <span id="admin-email"></span>
+            <button class="btn-logout" id="logout-btn" style="display: none;">Logout</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Admin Login -->
+        <div id="admin-auth" class="active">
+            <h2>Admin Login</h2>
+            <form id="login-form">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Email</label>
+                    <input type="email" id="auth-email" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" required>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem;">Password</label>
+                    <input type="password" id="auth-password" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" required>
+                </div>
+                <button type="submit" style="width: 100%; padding: 1rem; background: var(--secondary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Enter Dashboard</button>
+            </form>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="admin-dashboard">
+            <div class="nav-tabs">
+                <div class="nav-tab active-tab" onclick="switchView('orders-view', this)">Manage Orders</div>
+                <div class="nav-tab" onclick="switchView('portfolio-view', this)">Portfolio / Work</div>
+            </div>
+
+            <!-- Orders View -->
+            <div id="orders-view" class="section-view active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Total Orders</h4>
+                        <p id="stat-total">0</p>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--warning);">
+                        <h4>Pending</h4>
+                        <p id="stat-pending">0</p>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--info);">
+                        <h4>Accepted</h4>
+                        <p id="stat-accepted">0</p>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--success);">
+                        <h4>Completed</h4>
+                        <p id="stat-completed">0</p>
+                    </div>
+                </div>
+
+                <div class="orders-container">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Order Details</th>
+                                    <th>Delivery Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-list">
+                                <!-- Orders will be injected here -->
+                            </tbody>
+                        </table>
+                        <div id="no-orders" class="empty-state" style="display: none;">
+                            No orders found.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio View -->
+            <div id="portfolio-view" class="section-view">
+                <div class="portfolio-form">
+                    <h3>Add New Work / Design</h3>
+                    <form id="portfolio-form-el" style="margin-top: 1rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input type="text" id="p-title" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. Italian Slim Fit Suit" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input type="url" id="p-image" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="https://image-link.com/..." required>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Description</label>
+                            <textarea id="p-desc" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" rows="2" placeholder="Briefly describe the work..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="margin-top: 1rem; width: 200px; padding: 0.8rem; background: var(--secondary); color: white; border: none; border-radius: 8px; cursor: pointer;">Post Work</button>
+                    </form>
+                </div>
+
+                <div class="portfolio-grid" id="portfolio-list">
+                    <!-- Portfolio items injected here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, onValue, update, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsZ6HuUOeC-zvTfOU-9f0f0P3xHmrfiAc",
+            authDomain: "tailor5.firebaseapp.com",
+            projectId: "tailor5",
+            storageBucket: "tailor5.firebasestorage.app",
+            messagingSenderId: "939975173681",
+            appId: "1:939975173681:web:cea8391698c23ac6d79710",
+            databaseURL: "https://tailor5-default-rtdb.firebaseio.com/" // Standard default URL
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        const authSection = document.getElementById('admin-auth');
+        const dashboardSection = document.getElementById('admin-dashboard');
+        const logoutBtn = document.getElementById('logout-btn');
+        const adminEmailSpan = document.getElementById('admin-email');
+        const ordersList = document.getElementById('orders-list');
+        const portfolioList = document.getElementById('portfolio-list');
+
+        const ADMIN_UID = "dpF4HSGLmvhQjMet9CrfSzWYyNv2";
+
+        // Tab Switching
+        window.switchView = (viewId, tab) => {
+            document.querySelectorAll('.section-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active-tab'));
+            document.getElementById(viewId).classList.add('active');
+            tab.classList.add('active-tab');
+            if (viewId === 'portfolio-view') loadPortfolio();
+        };
+
+        // Auth Listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                if (user.uid === ADMIN_UID) {
+                    authSection.classList.remove('active');
+                    dashboardSection.classList.add('active');
+                    logoutBtn.style.display = 'block';
+                    adminEmailSpan.innerText = user.email;
+                    loadOrders();
+                    loadPortfolio();
+                } else {
+                    alert("Unauthorized Access. This page is for admins only.");
+                    signOut(auth);
+                }
+            } else {
+                authSection.classList.add('active');
+                dashboardSection.classList.remove('active');
+                logoutBtn.style.display = 'none';
+                adminEmailSpan.innerText = '';
+            }
+        });
+
+        // Login
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                alert("Login failed: " + error.message);
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => signOut(auth));
+
+        // Load Orders (Real-time)
+        function loadOrders() {
+            const ordersRef = ref(db, 'orders');
+            onValue(ordersRef, (snapshot) => {
+                const data = snapshot.val();
+                renderOrders(data);
+                updateStats(data);
+            });
+        }
+
+        // Portfolio Logic
+        document.getElementById('portfolio-form-el').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                title: document.getElementById('p-title').value,
+                image: document.getElementById('p-image').value,
+                desc: document.getElementById('p-desc').value,
+                timestamp: Date.now()
+            };
+            try {
+                await push(ref(db, 'portfolio'), data);
+                alert("Work posted successfully!");
+                document.getElementById('portfolio-form-el').reset();
+            } catch (e) { alert(e.message); }
+        };
+
+        function loadPortfolio() {
+            onValue(ref(db, 'portfolio'), (snapshot) => {
+                const data = snapshot.val();
+                portfolioList.innerHTML = '';
+                if (!data) return;
+                Object.entries(data).reverse().forEach(([id, item]) => {
+                    portfolioList.innerHTML += `
+                        <div class="portfolio-card">
+                            <img src="${item.image}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/300x180?text=No+Image'">
+                            <div class="portfolio-card-body">
+                                <h4>${item.title}</h4>
+                                <p>${item.desc}</p>
+                                <button onclick="deleteWork('${id}')" style="margin-top:10px; color:red; background:none; border:none; cursor:pointer; font-size:0.8rem;">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        window.deleteWork = (id) => {
+            if(confirm("Delete this work?")) set(ref(db, `portfolio/${id}`), null);
+        };
+
+        function renderOrders(orders) {
+            ordersList.innerHTML = '';
+            if (!orders) {
+                document.getElementById('no-orders').style.display = 'block';
+                return;
+            }
+            document.getElementById('no-orders').style.display = 'none';
+
+            const sortedOrders = Object.entries(orders).sort((a, b) => b[1].timestamp - a[1].timestamp);
+
+            sortedOrders.forEach(([id, order]) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <strong>${order.name}</strong><br>
+                        <small style="color: var(--text-dim)">${order.phone}</small><br>
+                        <small style="color: var(--text-dim)">${order.address}</small>
+                    </td>
+                    <td class="details-cell">
+                        <strong>${order.type}</strong>
+                        <div style="font-size: 0.8rem; color: #475569;">
+                            ${order.measurements}
+                        </div>
+                        ${order.notes ? `<div style="font-style: italic; margin-top: 5px; color: var(--accent);">Note: ${order.notes}</div>` : ''}
+                    </td>
+                    <td>${order.deliveryDate}</td>
+                    <td>
+                        <span class="badge badge-${order.status.toLowerCase()}">${order.status}</span>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            ${order.status === 'Pending' ? `<button class="btn-action btn-accept" onclick="updateStatus('${id}', 'Accepted')">Accept</button>` : ''}
+                            ${order.status === 'Accepted' ? `<button class="btn-action btn-complete" onclick="updateStatus('${id}', 'Completed')">Complete</button>` : ''}
+                        </div>
+                    </td>
+                `;
+                ordersList.appendChild(row);
+            });
+        }
+
+        function updateStats(orders) {
+            if (!orders) return;
+            const vals = Object.values(orders);
+            document.getElementById('stat-total').innerText = vals.length;
+            document.getElementById('stat-pending').innerText = vals.filter(o => o.status === 'Pending').length;
+            document.getElementById('stat-accepted').innerText = vals.filter(o => o.status === 'Accepted').length;
+            document.getElementById('stat-completed').innerText = vals.filter(o => o.status === 'Completed').length;
+        }
+
+        window.updateStatus = async (orderId, newStatus) => {
+            try {
+                const orderRef = ref(db, `orders/${orderId}`);
+                await update(orderRef, { status: newStatus });
+            } catch (error) {
+                alert("Update failed: " + error.message);
+            }
+        };
+    </script>
+</body>
+</html>

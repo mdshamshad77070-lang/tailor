@@ -1,0 +1,25 @@
+{
+  "rules": {
+    "orders": {
+      // Only the specific admin UID can read all orders
+      ".read": "auth != null && auth.uid === 'dpF4HSGLmvhQjMet9CrfSzWYyNv2'",
+      // Authenticated users can write to create new orders
+      ".write": "auth != null",
+      // Index for efficient user-specific queries (Tracking System)
+      ".indexOn": ["userId"],
+      
+      "$orderId": {
+        // Individual order read: Admin OR the user who created it
+        ".read": "auth != null && (auth.uid === 'dpF4HSGLmvhQjMet9CrfSzWYyNv2' || data.child('userId').val() === auth.uid)",
+        // Individual order write: Admin (all updates) OR User (only creation)
+        ".write": "auth != null && (auth.uid === 'dpF4HSGLmvhQjMet9CrfSzWYyNv2' || (!data.exists() && newData.child('userId').val() === auth.uid))"
+      }
+    },
+    "portfolio": {
+      // Anyone can see your work masterpieces (for trust)
+      ".read": true,
+      // Only the admin can add, update, or delete work
+      ".write": "auth != null && auth.uid === 'dpF4HSGLmvhQjMet9CrfSzWYyNv2'"
+    }
+  }
+}
