@@ -290,6 +290,21 @@
             text-align: center;
             color: var(--text-dim);
         }
+        /* Profile Section */
+        .profile-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-width: 800px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -323,6 +338,7 @@
             <div class="nav-tabs">
                 <div class="nav-tab active-tab" onclick="switchView('orders-view', this)">Manage Orders</div>
                 <div class="nav-tab" onclick="switchView('portfolio-view', this)">Portfolio / Work</div>
+                <div class="nav-tab" onclick="switchView('profile-view', this)">Update Profile</div>
             </div>
 
             <!-- Orders View -->
@@ -399,6 +415,40 @@
                 <div class="portfolio-grid" id="portfolio-list">
                     <!-- Portfolio items injected here -->
                 </div>
+
+                <!-- Profile View -->
+                <div id="profile-view" class="section-view">
+                    <div class="profile-container">
+                        <h3>Update Your Professional Profile</h3>
+                        <p style="color: var(--text-dim); margin-bottom: 1.5rem;">These details will be shown on the Home tab for customers.</p>
+                        
+                        <form id="profile-form">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
+                                <div class="form-group">
+                                    <label>Tailor Name</label>
+                                    <input type="text" id="prof-name" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. Master Shamshad" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Years of Experience</label>
+                                    <input type="text" id="prof-exp" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. 15 Years" required>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label>Profile Image URL</label>
+                                <input type="url" id="prof-image" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="https://..." required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label>Specialty</label>
+                                <input type="text" id="prof-specialty" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" placeholder="e.g. Wedding Suits & Traditional Wear" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1.5rem;">
+                                <label>About Me / Bio</label>
+                                <textarea id="prof-bio" style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px;" rows="4" placeholder="Tell customers about your skills..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary" style="padding: 1rem 2rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Save Profile Details</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -439,6 +489,7 @@
             document.getElementById(viewId).classList.add('active');
             tab.classList.add('active-tab');
             if (viewId === 'portfolio-view') loadPortfolio();
+            if (viewId === 'profile-view') loadProfile();
         };
 
         // Auth Listener
@@ -502,6 +553,35 @@
                 await push(ref(db, 'portfolio'), data);
                 alert("Work posted successfully!");
                 document.getElementById('portfolio-form-el').reset();
+            } catch (e) { alert(e.message); }
+        };
+
+        // Profile Logic
+        function loadProfile() {
+            onValue(ref(db, 'tailor_info'), (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    document.getElementById('prof-name').value = data.name || '';
+                    document.getElementById('prof-exp').value = data.experience || '';
+                    document.getElementById('prof-image').value = data.image || '';
+                    document.getElementById('prof-specialty').value = data.specialty || '';
+                    document.getElementById('prof-bio').value = data.bio || '';
+                }
+            }, { onlyOnce: true });
+        }
+
+        document.getElementById('profile-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('prof-name').value,
+                experience: document.getElementById('prof-exp').value,
+                image: document.getElementById('prof-image').value,
+                specialty: document.getElementById('prof-specialty').value,
+                bio: document.getElementById('prof-bio').value
+            };
+            try {
+                await set(ref(db, 'tailor_info'), data);
+                alert("Profile updated successfully!");
             } catch (e) { alert(e.message); }
         };
 

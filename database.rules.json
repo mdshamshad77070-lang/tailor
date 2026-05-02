@@ -1,24 +1,22 @@
 {
   "rules": {
     "orders": {
-      // Allows all authenticated users to read and query the orders node
-      // The client-side code will filter to show only their own orders
       ".read": "auth != null",
       ".write": "auth != null",
-      // Important for the tracking system to work efficiently
       ".indexOn": ["userId"],
-      
       "$orderId": {
-        // Detailed security: Admin can see everything, User can only see their own
         ".read": "auth != null && (auth.uid === 'dpF4HSGLmvhQjMet9CrfSzWYyNv2' || data.child('userId').val() === auth.uid)",
-        // Detailed security: Admin can update status, User can only create the order
         ".write": "auth != null && (auth.uid === 'dpF4HSGLmvhQjMet9CrfSzWYyNv2' || (!data.exists() && newData.child('userId').val() === auth.uid))"
       }
     },
     "portfolio": {
-      // Public can see masterpieces to build trust
       ".read": true,
-      // Only the master tailor (Admin) can add or remove work
+      ".write": "auth != null && auth.uid === 'dpF4HSGLmvhQjMet9CrfSzWYyNv2'"
+    },
+    "tailor_info": {
+      // Everyone can see the tailor's profile details
+      ".read": true,
+      // Only the master tailor can update their own profile
       ".write": "auth != null && auth.uid === 'dpF4HSGLmvhQjMet9CrfSzWYyNv2'"
     }
   }

@@ -229,18 +229,47 @@
             padding: 0 5%;
         }
 
-        .order-card {
-            background: #ffffff;
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
+        /* Tailor Profile (Home) */
+        .tailor-profile {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            animation: slideIn 0.4s ease-out;
+            gap: 3rem;
+            padding: 4rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
         }
+
+        .tailor-img {
+            flex: 1;
+            max-width: 450px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 5px solid var(--secondary);
+            box-shadow: 0 15px 30px rgba(197, 160, 89, 0.2);
+        }
+
+        .tailor-img img { width: 100%; height: auto; display: block; }
+
+        .tailor-info { flex: 1.2; }
+        .tailor-info h2 { font-family: var(--font-heading); font-size: 2.8rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .tailor-info h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px; }
+        .tailor-info p { line-height: 1.8; color: var(--text-dim); margin-bottom: 2rem; font-size: 1.1rem; }
+
+        .stat-box { display: flex; gap: 2rem; margin-top: 2rem; }
+        .stat-item { text-align: center; border-left: 2px solid var(--primary); padding-left: 1.5rem; }
+        .stat-item h4 { font-size: 1.5rem; color: var(--accent); }
+        .stat-item span { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; }
+
+        @media (max-width: 968px) {
+            .tailor-profile { flex-direction: column; text-align: center; gap: 2rem; padding: 2rem; border-radius: 0; }
+            .stat-box { justify-content: center; }
+            .stat-item { border-left: none; border-top: 2px solid var(--primary); padding: 1rem 0; }
+        }
+
+        /* Order Card */
 
         @keyframes slideIn {
             from { opacity: 0; transform: translateX(-20px); }
@@ -547,9 +576,32 @@
 
     <div id="home-view" class="view-section active">
         <div class="hero">
-            <h1>Mastery in Every Stitch</h1>
-            <p>Premium bespoke tailoring for the modern gentleman. Experience the luxury of a perfect fit.</p>
-            <a href="#order-section" class="btn-nav-primary" onclick="navigate('book')">Book an Appointment</a>
+            <h1>Expert Tailoring by Master Hands</h1>
+            <p>Every stitch tells a story of precision and passion.</p>
+        </div>
+
+        <div class="tailor-profile">
+            <div class="tailor-img">
+                <img id="home-prof-image" src="https://via.placeholder.com/450x600?text=Tailor+Profile" alt="Master Tailor">
+            </div>
+            <div class="tailor-info">
+                <h2 id="home-prof-name">Master Tailor</h2>
+                <h3 id="home-prof-specialty">Wedding Suits & Traditional Wear</h3>
+                <p id="home-prof-bio">Welcome to Darzi. We provide premium bespoke tailoring services for those who value fit, fabric, and finesse.</p>
+                
+                <div class="stat-box">
+                    <div class="stat-item">
+                        <h4 id="home-prof-exp">15+ Years</h4>
+                        <span>Experience</span>
+                    </div>
+                    <div class="stat-item">
+                        <h4>100%</h4>
+                        <span>Perfect Fit</span>
+                    </div>
+                </div>
+                
+                <button class="btn-nav-primary" style="margin-top: 3rem;" onclick="navigate('book')">Book Your Session</button>
+            </div>
         </div>
     </div>
 
@@ -721,6 +773,21 @@
             overlay.style.display = 'none';
             navigate('track');
         };
+
+        // Load Profile
+        function loadHomeProfile() {
+            onValue(ref(db, 'tailor_info'), (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    document.getElementById('home-prof-name').innerText = data.name || 'Master Tailor';
+                    document.getElementById('home-prof-image').src = data.image || 'https://via.placeholder.com/450x600';
+                    document.getElementById('home-prof-specialty').innerText = data.specialty || '';
+                    document.getElementById('home-prof-bio').innerText = data.bio || '';
+                    document.getElementById('home-prof-exp').innerText = data.experience || '15+ Years';
+                }
+            });
+        }
+        loadHomeProfile();
 
         // Load Portfolio
         onValue(ref(db, 'portfolio'), (snapshot) => {
